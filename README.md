@@ -35,8 +35,7 @@ A modern, interactive portfolio website built with Next.js, featuring a dynamic 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/portfolio.git
-cd portfolio
+git clone https://github.com/tvanwagener99/tvanwagener.github.io.git
 ```
 
 2. Install dependencies:
@@ -46,17 +45,14 @@ npm install
 yarn install
 ```
 
-3. Add the rain sound file:
-   - Place `rain.mp3` in the `public` directory
-
-4. Start the development server:
+3. Start the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Development Workflow
 
