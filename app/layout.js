@@ -70,18 +70,29 @@ export default function RootLayout({ children }) {
     }
     return 0.5;
   });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const audioRef = useRef(null);
+  const audioInitialized = useRef(false);
 
   useEffect(() => {
-    if (audioRef.current) {
+    if (audioRef.current && !audioInitialized.current) {
       audioRef.current.volume = volume;
-      if (volume > 0 && audioRef.current.paused) {
+      audioInitialized.current = true;
+      if (volume > 0) {
         audioRef.current.play().catch(() => {
           // Handle autoplay restrictions
           console.log('Autoplay prevented');
         });
-      } else if (volume === 0) {
+      }
+    } else if (audioRef.current && audioInitialized.current) {
+      // Only update volume if audio is already initialized
+      audioRef.current.volume = volume;
+      if (volume === 0 && !audioRef.current.paused) {
         audioRef.current.pause();
+      } else if (volume > 0 && audioRef.current.paused) {
+        audioRef.current.play().catch(() => {
+          console.log('Autoplay prevented');
+        });
       }
     }
   }, [volume]);
@@ -91,6 +102,22 @@ export default function RootLayout({ children }) {
     setVolume(newVolume);
     localStorage.setItem('rainVolume', newVolume.toString());
   }, []);
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMobileMenuOpen && !event.target.closest('.navbar')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isMobileMenuOpen]);
 
   return (
     <html lang="en">
@@ -110,14 +137,21 @@ export default function RootLayout({ children }) {
                 priority
               />
             </Link>
-            <ul className="nav-links">
-              <li><Link href="/">Home</Link></li>
-              <li><Link href="/about">About Me</Link></li>
-              <li><Link href="/projects">Projects</Link></li>
-              <li><Link href="/work">Work Experience</Link></li>
-              <li><Link href="/education">Education</Link></li>
-              <li><Link href="/certifications">Certifications</Link></li>
-              <li><Link href="/contact">Contact</Link></li>
+            <button 
+              className="mobile-menu-button"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? '✕' : '☰'}
+            </button>
+            <ul className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+              <li><Link href="/" onClick={() => setIsMobileMenuOpen(false)}>Home</Link></li>
+              <li><Link href="/about" onClick={() => setIsMobileMenuOpen(false)}>About Me</Link></li>
+              <li><Link href="/projects" onClick={() => setIsMobileMenuOpen(false)}>Projects</Link></li>
+              <li><Link href="/work" onClick={() => setIsMobileMenuOpen(false)}>Work Experience</Link></li>
+              <li><Link href="/education" onClick={() => setIsMobileMenuOpen(false)}>Education</Link></li>
+              <li><Link href="/certifications" onClick={() => setIsMobileMenuOpen(false)}>Certifications</Link></li>
+              <li><Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link></li>
               <li className="volume-control">
                 <span className="volume-icon">🔊</span>
                 <input
