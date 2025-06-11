@@ -128,7 +128,7 @@ export default function RootLayout({ children }) {
         <RainEffect />
         <nav className="navbar">
           <div className="navbar-content">
-            <Link href="/" className="logo">
+            <Link href="/home" className="logo">
               <Image 
                 src={`${BASE_PATH}/logo.png`} 
                 alt="TVW Logo" 
@@ -145,7 +145,7 @@ export default function RootLayout({ children }) {
               {isMobileMenuOpen ? '✕' : '☰'}
             </button>
             <ul className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-              <li><Link href="/" onClick={() => setIsMobileMenuOpen(false)}>Home</Link></li>
+              <li><Link href="/home" onClick={() => setIsMobileMenuOpen(false)}>Home</Link></li>
               <li><Link href="/about" onClick={() => setIsMobileMenuOpen(false)}>About Me</Link></li>
               <li><Link href="/projects" onClick={() => setIsMobileMenuOpen(false)}>Projects</Link></li>
               <li><Link href="/work" onClick={() => setIsMobileMenuOpen(false)}>Work Experience</Link></li>

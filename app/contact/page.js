@@ -42,8 +42,8 @@ export default function ContactPage() {
       const result = await response.json();
 
       if (response.ok && result.ok) {
-        setStatus({ loading: false, success: true, error: null });
-        setFormData({ name: '', email: '', message: '' });
+      setStatus({ loading: false, success: true, error: null });
+      setFormData({ name: '', email: '', message: '' });
       } else {
         throw new Error(result.error || `Server responded with status: ${response.status}`);
       }
