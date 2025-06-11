@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: process.env.NODE_ENV === 'production' ? '/tvanwagener.github.io/tvanwagener.github.io' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/tvanwagener.github.io' : '',
   images: {
     unoptimized: true,
   },

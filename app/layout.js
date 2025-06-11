@@ -63,26 +63,34 @@ function RainEffect() {
 }
 
 export default function RootLayout({ children }) {
-  const [volume, setVolume] = useState(0.5);
-  const audioRef = useRef(null);
-  const drops = useMemo(() => Array.from({ length: NUM_DROPS }, getRandomDrop), []);
-
-  const handleVolumeChange = useCallback((e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume;
+  const [volume, setVolume] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedVolume = localStorage.getItem('rainVolume');
+      return savedVolume ? parseFloat(savedVolume) : 0.5;
     }
-  }, []);
+    return 0.5;
+  });
+  const audioRef = useRef(null);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
-      audioRef.current.play().catch(error => {
-        console.log('Audio playback failed:', error);
-      });
+      if (volume > 0 && audioRef.current.paused) {
+        audioRef.current.play().catch(() => {
+          // Handle autoplay restrictions
+          console.log('Autoplay prevented');
+        });
+      } else if (volume === 0) {
+        audioRef.current.pause();
+      }
     }
   }, [volume]);
+
+  const handleVolumeChange = useCallback((e) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    localStorage.setItem('rainVolume', newVolume.toString());
+  }, []);
 
   return (
     <html lang="en">
