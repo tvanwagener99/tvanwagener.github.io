@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const NUM_DROPS = 50;
+const BASE_PATH = process.env.NODE_ENV === 'production' ? '/tvanwagener.github.io' : '';
 
 function getRandomDrop() {
   return {
@@ -62,46 +63,44 @@ function RainEffect() {
 }
 
 export default function RootLayout({ children }) {
-  const [volume, setVolume] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedVolume = localStorage.getItem('rainVolume');
-      return savedVolume ? parseFloat(savedVolume) : 0.5;
-    }
-    return 0.5;
-  });
+  const [volume, setVolume] = useState(0.5);
   const audioRef = useRef(null);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-      if (volume > 0 && audioRef.current.paused) {
-        audioRef.current.play().catch(() => {
-          // Handle autoplay restrictions
-          console.log('Autoplay prevented');
-        });
-      } else if (volume === 0) {
-        audioRef.current.pause();
-      }
-    }
-  }, [volume]);
+  const drops = useMemo(() => Array.from({ length: NUM_DROPS }, getRandomDrop), []);
 
   const handleVolumeChange = useCallback((e) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
-    localStorage.setItem('rainVolume', newVolume.toString());
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
   }, []);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+      audioRef.current.play().catch(error => {
+        console.log('Audio playback failed:', error);
+      });
+    }
+  }, [volume]);
 
   return (
     <html lang="en">
       <body>
         <audio ref={audioRef} loop preload="auto">
-          <source src="/rain.mp3" type="audio/mpeg" />
+          <source src={`${BASE_PATH}/rain.mp3`} type="audio/mpeg" />
         </audio>
         <RainEffect />
         <nav className="navbar">
           <div className="navbar-content">
             <Link href="/" className="logo">
-              <Image src="/logo.png" alt="TVW Logo" width={50} height={30}/>
+              <Image 
+                src={`${BASE_PATH}/logo.png`} 
+                alt="TVW Logo" 
+                width={50} 
+                height={30}
+                priority
+              />
             </Link>
             <ul className="nav-links">
               <li><Link href="/">Home</Link></li>

@@ -65,7 +65,10 @@ describe('ContactPage', () => {
     
     // Mock successful fetch response
     global.fetch.mockImplementationOnce(() => 
-      Promise.resolve({ ok: true })
+      Promise.resolve({ 
+        ok: true,
+        json: () => Promise.resolve({ ok: true })
+      })
     );
 
     // Fill out the form
@@ -78,7 +81,11 @@ describe('ContactPage', () => {
 
     // Wait for success message
     await waitFor(() => {
-      expect(screen.getByText(/thank you for your message/i)).toBeInTheDocument();
+      expect(
+        screen.getByText((content) =>
+          content.includes('Thank you for your message')
+        )
+      ).toBeInTheDocument();
     });
 
     // Click "Send another message" button
@@ -142,7 +149,10 @@ describe('ContactPage', () => {
     
     // Mock successful fetch response
     global.fetch.mockImplementationOnce(() => 
-      Promise.resolve({ ok: true })
+      Promise.resolve({ 
+        ok: true,
+        json: () => Promise.resolve({ ok: true })
+      })
     );
     
     fireEvent.click(screen.getByRole('button', { name: /send message/i }));

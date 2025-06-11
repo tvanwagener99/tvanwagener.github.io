@@ -32,18 +32,21 @@ export default function ContactPage() {
       const response = await fetch('https://formspree.io/f/xblygnjg', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(formData),
+        mode: 'cors'
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.error || `Server responded with status: ${response.status}`);
-      }
+      const result = await response.json();
 
-      setStatus({ loading: false, success: true, error: null });
-      setFormData({ name: '', email: '', message: '' });
+      if (response.ok && result.ok) {
+        setStatus({ loading: false, success: true, error: null });
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        throw new Error(result.error || `Server responded with status: ${response.status}`);
+      }
     } catch (error) {
       console.error('Form submission error:', error);
       let errorMessage = 'Failed to send message. ';
